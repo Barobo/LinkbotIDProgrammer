@@ -3,11 +3,28 @@
 #from gi.repository import Gtk
 import pygtk
 import gtk as Gtk
+import glib
+import time
 
 import os
 from os.path import join
 
-from barobo.linkbot import *
+from pybarobo import Linkbot
+
+def _getSerialPorts():
+  if os.name == 'nt':
+    available = []
+    for i in range(256):
+      try:
+        s = serial.Serial(i)
+        available.append('\\\\.\\COM'+str(i+1))
+        s.close()
+      except Serial.SerialException:
+        pass
+    return available
+  else:
+    from serial.tools import list_ports
+    return [port[0] for port in list_ports.comports()]
 
 def find_tty_usb(idVendor, idProduct):
     """find_tty_usb('067b', '2302') -> '/dev/ttyACM0'"""
@@ -33,6 +50,10 @@ def find_tty_usb(idVendor, idProduct):
 class Handler:
   def __init__(self, gtkbuilder):
     self.builder = gtkbuilder
+    self.liststore = gtkbuilder.get_object("liststore_comports")
+    self.combobox = gtkbuilder.get_object("combobox1")
+    self.__updateComPorts()
+    glib.timeout_add(500, self.__updateComPorts)
 
   def button_apply_clicked_cb(self, *args):
     self.__programID()
@@ -57,13 +78,17 @@ class Handler:
       return
     # Connect to a linkbot
     try:
+      """
       ttydev = find_tty_usb('03eb', '204b')
       if ttydev is None:
         self.__errorDialog("No Linkbot detected. Please turn on and connect a Linkbot.")
         return
+      """
       linkbot = Linkbot()
-      linkbot.connectWithTTY(ttydev)
-      linkbot._setID(text.upper())
+      print 'Connecting to {}...'.format(self.combobox.get_child().get_text())
+      linkbot.connectWithTTY(self.combobox.get_child().get_text())
+      linkbot.setLEDColor(0, 255, 0)
+      linkbot.setID(text.upper())
       linkbot.setBuzzerFrequency(440)
       time.sleep(0.5)
       linkbot.setBuzzerFrequency(0)
@@ -76,6 +101,13 @@ class Handler:
     d.set_markup(text)
     d.run()
     d.destroy()
+
+  def __updateComPorts(self):
+    ports = _getSerialPorts()
+    self.liststore.clear()
+    for p in sorted(ports):
+      self.liststore.append([p])
+    return True
 
 builder = Gtk.Builder()
 builder.add_from_file("interface.glade")

@@ -11,6 +11,84 @@
       <object class="GtkVBox" id="dialog-vbox1">
         <property name="can_focus">False</property>
         <property name="spacing">2</property>
+        <child>
+          <object class="GtkHBox" id="hbox1">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkLabel" id="label2">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Robot Com Port:</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkComboBox" id="combobox1">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="model">liststore_comports</property>
+                <property name="has_entry">True</property>
+                <property name="entry_text_column">0</property>
+                <signal name="button-press-event" handler="combobox1_button_press_event_cb" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkHSeparator" id="hseparator1">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label1">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Please enter the new Serial ID in 
+text box below.</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkEntry" id="entry1">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="invisible_char">•</property>
+            <property name="primary_icon_activatable">False</property>
+            <property name="secondary_icon_activatable">False</property>
+            <property name="primary_icon_sensitive">True</property>
+            <property name="secondary_icon_sensitive">True</property>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
         <child internal-child="action_area">
           <object class="GtkHButtonBox" id="dialog-action_area1">
             <property name="can_focus">False</property>
@@ -65,36 +143,7 @@
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="pack_type">end</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="label1">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="label" translatable="yes">Please enter the new Serial ID in 
-text box below.</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkEntry" id="entry1">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="invisible_char">•</property>
-            <property name="primary_icon_activatable">False</property>
-            <property name="secondary_icon_activatable">False</property>
-            <property name="primary_icon_sensitive">True</property>
-            <property name="secondary_icon_sensitive">True</property>
-          </object>
-          <packing>
-            <property name="expand">True</property>
-            <property name="fill">True</property>
-            <property name="position">2</property>
+            <property name="position">4</property>
           </packing>
         </child>
       </object>
@@ -104,5 +153,11 @@ text box below.</property>
       <action-widget response="0">button_cancel</action-widget>
       <action-widget response="0">button_ok</action-widget>
     </action-widgets>
+  </object>
+  <object class="GtkListStore" id="liststore_comports">
+    <columns>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+    </columns>
   </object>
 </interface>
