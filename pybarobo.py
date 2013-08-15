@@ -16,7 +16,7 @@ class _CommsEngine:
     self.recvbuf = bytearray([])
     # Try x times in case of errors
     # Send the packet
-    print "Send: {}".format(map(hex, sendbuf))
+    # print "Send: {}".format(map(hex, sendbuf))
     self.serialdevice.write(sendbuf)
     #print "Sent: {}".format(bytes(sendbuf))
     for _ in range(10):
@@ -29,7 +29,7 @@ class _CommsEngine:
           raise IOError("Received error response from robot.")
       else:
         break
-    print "Recv: {}".format(map(hex, self.recvbuf))
+    # print "Recv: {}".format(map(hex, self.recvbuf))
     return self.recvbuf[5:]
 
 class Linkbot:

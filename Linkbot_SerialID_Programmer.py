@@ -10,6 +10,28 @@ import os
 from os.path import join
 
 from pybarobo import Linkbot
+import serial
+
+import _winreg as winreg
+import itertools
+
+def enumerate_serial_ports():
+    """ Uses the Win32 registry to return an
+        iterator of serial (COM) ports
+        existing on this computer.
+    """
+    path = 'HARDWARE\\DEVICEMAP\\SERIALCOMM'
+    try:
+        key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, path)
+    except WindowsError:
+        raise IterationError
+
+    for i in itertools.count():
+        try:
+            val = winreg.EnumValue(key, i)
+            yield '\\\\.\\' + str(val[1])
+        except EnvironmentError:
+            break
 
 def _getSerialPorts():
   if os.name == 'nt':
@@ -19,7 +41,7 @@ def _getSerialPorts():
         s = serial.Serial(i)
         available.append('\\\\.\\COM'+str(i+1))
         s.close()
-      except Serial.SerialException:
+      except serial.SerialException:
         pass
     return available
   else:
@@ -87,8 +109,11 @@ class Handler:
       linkbot = Linkbot()
       print 'Connecting to {}...'.format(self.combobox.get_child().get_text())
       linkbot.connectWithTTY(self.combobox.get_child().get_text())
+      time.sleep(0.2)
       linkbot.setLEDColor(0, 255, 0)
+      time.sleep(0.1)
       linkbot.setID(text.upper())
+      time.sleep(0.1)
       linkbot.setBuzzerFrequency(440)
       time.sleep(0.5)
       linkbot.setBuzzerFrequency(0)
@@ -103,7 +128,7 @@ class Handler:
     d.destroy()
 
   def __updateComPorts(self):
-    ports = _getSerialPorts()
+    ports = enumerate_serial_ports()
     self.liststore.clear()
     for p in sorted(ports):
       self.liststore.append([p])
@@ -117,5 +142,5 @@ builder.connect_signals(sighandler)
 #entry.set_editable(True)
 window = builder.get_object("dialog1")
 window.show_all()
-print "Main!"
+#print "Main!"
 Gtk.main()
