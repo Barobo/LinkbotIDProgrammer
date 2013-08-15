@@ -34,7 +34,6 @@
                 <property name="model">liststore_comports</property>
                 <property name="has_entry">True</property>
                 <property name="entry_text_column">0</property>
-                <signal name="button-press-event" handler="combobox1_button_press_event_cb" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
