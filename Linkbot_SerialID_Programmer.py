@@ -12,8 +12,11 @@ from os.path import join
 from pybarobo import Linkbot
 import serial
 
-import _winreg as winreg
-import itertools
+try:
+  import _winreg as winreg
+  import itertools
+except:
+  pass
 
 def enumerate_serial_ports():
     """ Uses the Win32 registry to return an
@@ -88,6 +91,9 @@ class Handler:
     self.__programID()
     Gtk.main_quit(*args)
     pass
+
+  def button_clear_clicked_cb(self, *args):
+    self.builder.get_object("entry1").set_text('')
 
   def gtk_main_quit(self, *args):
     Gtk.main_quit(*args)
