@@ -19,6 +19,7 @@ except:
   pass
 
 def enumerate_serial_ports():
+  if os.name == 'nt':
     """ Uses the Win32 registry to return an
         iterator of serial (COM) ports
         existing on this computer.
@@ -35,6 +36,10 @@ def enumerate_serial_ports():
             yield '\\\\.\\' + str(val[1])
         except EnvironmentError:
             break
+  else:
+    from serial.tools import list_ports
+    for port in list_ports.comports():
+      yield port[0]
 
 def _getSerialPorts():
   if os.name == 'nt':
