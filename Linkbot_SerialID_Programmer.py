@@ -19,7 +19,6 @@ except:
   pass
 
 def enumerate_serial_ports():
-  if os.name == 'nt':
     """ Uses the Win32 registry to return an
         iterator of serial (COM) ports
         existing on this computer.
@@ -36,10 +35,6 @@ def enumerate_serial_ports():
             yield '\\\\.\\' + str(val[1])
         except EnvironmentError:
             break
-  else:
-    from serial.tools import list_ports
-    for port in list_ports.comports():
-      yield port[0]
 
 def _getSerialPorts():
   if os.name == 'nt':
@@ -87,6 +82,8 @@ class Handler:
 
   def button_apply_clicked_cb(self, *args):
     self.__programID()
+    entry = self.builder.get_object("entry1")
+    entry.set_text('')
 
   def button_cancel_clicked_cb(self, *args):
     Gtk.main_quit(*args)
@@ -102,6 +99,9 @@ class Handler:
 
   def gtk_main_quit(self, *args):
     Gtk.main_quit(*args)
+
+  def entry1_activate_cb(self, *args):
+    self.button_apply_clicked_cb(*args)
 
   def __programID(self):
     entry = self.builder.get_object("entry1")
@@ -125,6 +125,9 @@ class Handler:
       time.sleep(0.1)
       linkbot.setID(text.upper())
       time.sleep(0.1)
+      if linkbot.getID() != text.upper():
+        linkbot.disconnect()
+        raise Exception('Error programming serial ID')
       linkbot.setBuzzerFrequency(440)
       time.sleep(0.5)
       linkbot.setBuzzerFrequency(0)
