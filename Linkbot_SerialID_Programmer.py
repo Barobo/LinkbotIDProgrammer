@@ -104,6 +104,19 @@ class Handler:
   def entry1_activate_cb(self, *args):
     self.button_apply_clicked_cb(*args)
 
+  def button_getid_clicked_cb(self, *args):
+    linkbot = Linkbot()
+    print 'Connecting to {}...'.format(self.combobox.get_child().get_text())
+    linkbot.connectWithTTY(self.combobox.get_child().get_text())
+    time.sleep(0.2)
+    myid = linkbot.getID()
+    linkbot.disconnect()
+    d = Gtk.MessageDialog(type = Gtk.MESSAGE_ERROR, flags=Gtk.DIALOG_MODAL, buttons = Gtk.BUTTONS_CLOSE)
+    d.set_markup('Linkbot id is {}'.format(myid))
+    d.run()
+    d.destroy()
+
+
   def __programID(self):
     entry = self.builder.get_object("entry1")
     text = entry.get_text()
@@ -137,7 +150,7 @@ class Handler:
       self.__errorDialog(str(e))
 
   def __errorDialog(self, text):
-    d = Gtk.MessageDialog(type = Gtk.MESSAGE_ERROR, flags=Gtk.DIALOG_MODAL, buttons = Gtk.BUTTONS_CLOSE)
+    clicked_d = Gtk.MessageDialog(type = Gtk.MESSAGE_ERROR, flags=Gtk.DIALOG_MODAL, buttons = Gtk.BUTTONS_CLOSE)
     d.set_markup(text)
     d.run()
     d.destroy()

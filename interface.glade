@@ -82,7 +82,7 @@ text box below.</property>
             <property name="secondary_icon_activatable">False</property>
             <property name="primary_icon_sensitive">True</property>
             <property name="secondary_icon_sensitive">True</property>
-            <signal name="activate" handler="entry1_activate_cb" swapped="no" />
+            <signal name="activate" handler="entry1_activate_cb" swapped="no"/>
           </object>
           <packing>
             <property name="expand">True</property>
@@ -125,6 +125,21 @@ text box below.</property>
               </packing>
             </child>
             <child>
+              <object class="GtkButton" id="button_getid">
+                <property name="label" translatable="yes">Get ID</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
+                <signal name="clicked" handler="button_getid_clicked_cb" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkButton" id="button_cancel">
                 <property name="label" translatable="yes">Cancel</property>
                 <property name="visible">True</property>
@@ -136,7 +151,7 @@ text box below.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">2</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <child>
@@ -151,7 +166,7 @@ text box below.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">3</property>
+                <property name="position">4</property>
               </packing>
             </child>
           </object>
@@ -167,6 +182,7 @@ text box below.</property>
     <action-widgets>
       <action-widget response="0">button_clear</action-widget>
       <action-widget response="0">button_apply</action-widget>
+      <action-widget response="0">button_getid</action-widget>
       <action-widget response="0">button_cancel</action-widget>
       <action-widget response="0">button_ok</action-widget>
     </action-widgets>
