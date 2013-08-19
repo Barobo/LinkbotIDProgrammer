@@ -19,6 +19,7 @@ except:
   pass
 
 def enumerate_serial_ports():
+  if os.name == 'nt':
     """ Uses the Win32 registry to return an
         iterator of serial (COM) ports
         existing on this computer.
@@ -142,7 +143,10 @@ class Handler:
     d.destroy()
 
   def __updateComPorts(self):
-    ports = enumerate_serial_ports()
+    if os.name == 'nt':
+      ports = enumerate_serial_ports()
+    else:
+      ports = _getSerialPorts()
     self.liststore.clear()
     for p in sorted(ports):
       self.liststore.append([p])
