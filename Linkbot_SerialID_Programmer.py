@@ -12,6 +12,9 @@ from os.path import join
 from pybarobo import Linkbot
 import serial
 
+versioninfo = ''
+logfile = os.path.join(os.environ['HOME'], 'linkbot_serialID_logfile.csv')
+
 try:
   import _winreg as winreg
   import itertools
@@ -146,11 +149,24 @@ class Handler:
       time.sleep(0.5)
       linkbot.setBuzzerFrequency(0)
       linkbot.disconnect()
+      try:
+        f = open(logfile, 'a')
+      except:
+        f = open(logfile, 'w')
+      f.write('{0}, {1}, {2}{3:02}{4:02}{5:02}{6:02}\n'.format(
+            text.upper(), 
+            versioninfo, 
+            time.gmtime().tm_year,
+            time.gmtime().tm_mon,
+            time.gmtime().tm_mday,
+            time.gmtime().tm_hour,
+            time.gmtime().tm_min))
+      f.close()
     except Exception as e:
       self.__errorDialog(str(e))
 
   def __errorDialog(self, text):
-    clicked_d = Gtk.MessageDialog(type = Gtk.MESSAGE_ERROR, flags=Gtk.DIALOG_MODAL, buttons = Gtk.BUTTONS_CLOSE)
+    d = Gtk.MessageDialog(type = Gtk.MESSAGE_ERROR, flags=Gtk.DIALOG_MODAL, buttons = Gtk.BUTTONS_CLOSE)
     d.set_markup(text)
     d.run()
     d.destroy()
@@ -165,6 +181,10 @@ class Handler:
       self.liststore.append([p])
     return True
 
+#Get the current version string 
+f = open('versioninfo.txt', 'r')
+versioninfo = f.readline().rstrip()
+f.close()
 builder = Gtk.Builder()
 builder.add_from_file("interface.glade")
 sighandler = Handler(builder)
