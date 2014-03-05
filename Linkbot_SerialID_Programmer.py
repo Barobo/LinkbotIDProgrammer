@@ -14,7 +14,10 @@ from barobo import Linkbot
 import serial
 
 versioninfo = ''
-logfile = os.path.join(os.environ['HOME'], 'linkbot_serialID_logfile.csv')
+if os.name != 'nt':
+  logfile = os.path.join(os.environ['HOME'], 'linkbot_serialID_logfile.csv')
+else:
+  logfile = None
 
 try:
   import _winreg as winreg
@@ -29,6 +32,7 @@ def enumerate_serial_ports():
         existing on this computer.
     """
     path = 'HARDWARE\\DEVICEMAP\\SERIALCOMM'
+    key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, path)
     try:
         key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, path)
     except WindowsError:
@@ -150,19 +154,20 @@ class Handler:
       time.sleep(0.5)
       linkbot.setBuzzerFrequency(0)
       self.ctx.disconnect()
-      try:
-        f = open(logfile, 'a')
-      except:
-        f = open(logfile, 'w')
-      f.write('{0}, {1}, {2}{3:02}{4:02}{5:02}{6:02}\n'.format(
-            text.upper(), 
-            versioninfo, 
-            time.gmtime().tm_year,
-            time.gmtime().tm_mon,
-            time.gmtime().tm_mday,
-            time.gmtime().tm_hour,
-            time.gmtime().tm_min))
-      f.close()
+      if logfile:
+        try:
+          f = open(logfile, 'a')
+        except:
+          f = open(logfile, 'w')
+        f.write('{0}, {1}, {2}{3:02}{4:02}{5:02}{6:02}\n'.format(
+              text.upper(), 
+              versioninfo, 
+              time.gmtime().tm_year,
+              time.gmtime().tm_mon,
+              time.gmtime().tm_mday,
+              time.gmtime().tm_hour,
+              time.gmtime().tm_min))
+        f.close()
     except Exception as e:
       self.__errorDialog(str(e))
 
