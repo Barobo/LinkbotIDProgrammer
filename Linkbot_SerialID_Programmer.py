@@ -9,7 +9,8 @@ import time
 import os
 from os.path import join
 
-from pybarobo import Linkbot
+import barobo
+from barobo import Linkbot
 import serial
 
 versioninfo = ''
@@ -83,6 +84,7 @@ class Handler:
     self.combobox = gtkbuilder.get_object("combobox1")
     self.__updateComPorts()
     glib.timeout_add(500, self.__updateComPorts)
+    self.ctx = barobo.BaroboCtx()
 
   def button_apply_clicked_cb(self, *args):
     self.__programID()
@@ -108,12 +110,11 @@ class Handler:
     self.button_apply_clicked_cb(*args)
 
   def button_getid_clicked_cb(self, *args):
-    linkbot = Linkbot()
     print 'Connecting to {}...'.format(self.combobox.get_child().get_text())
-    linkbot.connectWithTTY(self.combobox.get_child().get_text())
-    time.sleep(0.2)
-    myid = linkbot.getID()
-    linkbot.disconnect()
+    self.ctx.connectDongleSFP(self.combobox.get_child().get_text())
+    linkbot = self.ctx.getLinkbot()
+    myid = linkbot.getSerialID()
+    self.ctx.disconnect()
     d = Gtk.MessageDialog(type = Gtk.MESSAGE_ERROR, flags=Gtk.DIALOG_MODAL, buttons = Gtk.BUTTONS_CLOSE)
     d.set_markup('Linkbot id is {}'.format(myid))
     d.run()
@@ -134,21 +135,21 @@ class Handler:
         self.__errorDialog("No Linkbot detected. Please turn on and connect a Linkbot.")
         return
       """
-      linkbot = Linkbot()
       print 'Connecting to {}...'.format(self.combobox.get_child().get_text())
-      linkbot.connectWithTTY(self.combobox.get_child().get_text())
+      self.ctx.connectDongleSFP(self.combobox.get_child().get_text())
+      linkbot = self.ctx.getLinkbot()
       time.sleep(0.2)
       linkbot.setLEDColor(0, 255, 0)
       time.sleep(0.1)
-      linkbot.setID(text.upper())
+      linkbot._setSerialID(text.upper())
       time.sleep(0.1)
-      if linkbot.getID() != text.upper():
-        linkbot.disconnect()
+      if linkbot.getSerialID() != text.upper():
+        self.ctx.disconnect()
         raise Exception('Error programming serial ID')
       linkbot.setBuzzerFrequency(440)
       time.sleep(0.5)
       linkbot.setBuzzerFrequency(0)
-      linkbot.disconnect()
+      self.ctx.disconnect()
       try:
         f = open(logfile, 'a')
       except:
